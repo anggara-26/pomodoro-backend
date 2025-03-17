@@ -1,42 +1,21 @@
 package handlers
 
 import (
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/cors"
+	"github.com/gofiber/fiber/v2"
 )
 
 type Response struct {
-	Msg  string
-	Code int
+	Message string      `json:"message"`
+	Code    int         `json:"code"`
+	Data    interface{} `json:"data,omitempty"`
 }
 
-func CreateRouter() *chi.Mux {
+func CreateRouter(r *fiber.App) {
 
-	router := chi.NewRouter()
+	api := r.Group("/api")
 
-	router.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"https://*", "http://*"},
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTION"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CRSF-Token"},
-		ExposedHeaders:   []string{"Link"},
-		AllowCredentials: true,
-		MaxAge:           300,
-	}))
+	v1 := api.Group("/v1")
 
-	router.Route("/api", func(router chi.Router) {
-
-		router.Route("/v1", func(router chi.Router) {
-
-			router.Get("/healthcheck", healthCheck)
-
-		})
-
-		// version 2 - for future use
-		// router.Route("/v2", func(router chi.Router) {
-		// })
-
-	})
-
-	return router
+	v1.Get("/healthcheck", healthCheck)
 
 }

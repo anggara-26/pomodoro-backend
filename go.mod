@@ -3,8 +3,6 @@ module github.com/anggara-26/pomodoro-backend.git
 go 1.24.1
 
 require (
-	github.com/go-chi/chi/v5 v5.2.1
-	github.com/go-chi/cors v1.2.1
 	github.com/gofiber/fiber/v2 v2.52.6
 	go.mongodb.org/mongo-driver v1.17.3
 )

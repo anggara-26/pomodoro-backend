@@ -1,24 +1,17 @@
 package handlers
 
 import (
-	"encoding/json"
-	"log"
 	"net/http"
+
+	"github.com/gofiber/fiber/v2"
 )
 
-func healthCheck(w http.ResponseWriter, r *http.Request) {
+func healthCheck(c *fiber.Ctx) error {
 	res := Response{
-		Msg:  "Server is running",
-		Code: 200,
+		Message: "Server is running",
+		Code:    200,
+		Data:    "Pomodoro Backend",
 	}
 
-	jsonResponse, err := json.Marshal(res)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonResponse)
+	return c.Status(http.StatusOK).JSON(res)
 }

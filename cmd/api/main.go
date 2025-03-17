@@ -3,13 +3,13 @@ package main
 import (
 	"context"
 	"log"
-	"net/http"
 	"os"
 	"time"
 
 	"github.com/anggara-26/pomodoro-backend.git/db"
 	"github.com/anggara-26/pomodoro-backend.git/handlers"
 	"github.com/anggara-26/pomodoro-backend.git/services"
+	"github.com/gofiber/fiber/v2"
 )
 
 type Application struct {
@@ -34,7 +34,10 @@ func main() {
 	services.New(mongoClient)
 
 	log.Println("Connected to MongoDB!")
-	// running on port
+
 	log.Println("Server is running on port " + os.Getenv("PORT"))
-	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), handlers.CreateRouter()))
+
+	app := fiber.New()
+	handlers.CreateRouter(app)
+	app.Listen(":" + os.Getenv("PORT"))
 }
