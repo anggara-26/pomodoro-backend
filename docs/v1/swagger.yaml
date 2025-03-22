@@ -1,0 +1,398 @@
+definitions:
+  handler.Response:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+      total:
+        type: integer
+    type: object
+  model.CreateSessionDTO:
+    properties:
+      duration:
+        type: integer
+      ended_at:
+        type: string
+      started_at:
+        type: string
+      status:
+        $ref: '#/definitions/model.SessionStatus'
+      task_id:
+        type: string
+      type:
+        $ref: '#/definitions/model.SessionType'
+      user_id:
+        type: string
+    required:
+    - duration
+    - type
+    - user_id
+    type: object
+  model.CreateTaskDTO:
+    properties:
+      assigned_at:
+        type: string
+      completed_pomodoros:
+        type: integer
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      description:
+        type: string
+      estimated_pomodoros:
+        minimum: 1
+        type: integer
+      status:
+        $ref: '#/definitions/model.TaskStatus'
+      title:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    required:
+    - title
+    - user_id
+    type: object
+  model.CreateUserDTO:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      firebase_uid:
+        type: string
+      name:
+        type: string
+    required:
+    - email
+    - firebase_uid
+    - name
+    type: object
+  model.SessionStatus:
+    enum:
+    - active
+    - break
+    - skipped
+    - completed
+    type: string
+    x-enum-varnames:
+    - SessionActive
+    - SessionBreak
+    - SessionSkipped
+    - SessionCompleted
+  model.SessionType:
+    enum:
+    - focus
+    - short_break
+    - long_break
+    type: string
+    x-enum-varnames:
+    - Focus
+    - ShortBreak
+    - LongBreak
+  model.TaskStatus:
+    enum:
+    - pending
+    - in_progress
+    - completed
+    - deleted
+    type: string
+    x-enum-varnames:
+    - TaskPending
+    - TaskInProgress
+    - TaskCompleted
+    - TaskDeleted
+  model.UpdateTaskDTO:
+    properties:
+      assigned_at:
+        type: string
+      completed_pomodoros:
+        type: integer
+      description:
+        type: string
+      estimated_pomodoros:
+        minimum: 1
+        type: integer
+      status:
+        $ref: '#/definitions/model.TaskStatus'
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.UpdateUserDTO:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+info:
+  contact: {}
+  description: This is the API for Pomodoro App
+  title: Pomodoro API
+  version: "1.0"
+paths:
+  /api/v1/healthcheck:
+    get:
+      consumes:
+      - application/json
+      description: Checks if the server is running
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Health Check
+      tags:
+      - Health
+  /api/v1/sessions/end/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Ends an active pomodoro session
+      parameters:
+      - description: Session ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Skip the session
+        in: query
+        name: is_skip
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: End Pomodoro Session
+      tags:
+      - Pomodoro Session
+  /api/v1/sessions/start:
+    post:
+      consumes:
+      - application/json
+      description: Starts a new pomodoro session
+      parameters:
+      - description: Pomodoro Session Data
+        in: body
+        name: session
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateSessionDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Start Pomodoro Session
+      tags:
+      - Pomodoro Session
+  /api/v1/tasks:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new task
+      parameters:
+      - description: Task Data
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateTaskDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Create Task
+      tags:
+      - Task
+  /api/v1/tasks/{id}:
+    delete:
+      description: Deletes a task from the database by ID
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Delete Task by ID
+      tags:
+      - Task
+    get:
+      description: Retrieves a task from the database by ID
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Get Task by ID
+      tags:
+      - Task
+    put:
+      consumes:
+      - application/json
+      description: Updates a task in the database by ID
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Task Data
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateTaskDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Update Task by ID
+      tags:
+      - Task
+  /api/v1/tasks/user/{id}:
+    get:
+      description: Retrieves tasks from the database by User ID with optional filters
+        and pagination
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Task Status
+        in: query
+        name: status
+        type: string
+      - description: Task Title
+        in: query
+        name: title
+        type: string
+      - description: Start Date
+        in: query
+        name: start_date
+        type: string
+      - description: End Date
+        in: query
+        name: end_date
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Number of tasks per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Get Tasks by User ID
+      tags:
+      - Task
+  /api/v1/users:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new user in the database
+      parameters:
+      - description: User Data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateUserDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Create User
+      tags:
+      - User
+  /api/v1/users/{id}:
+    get:
+      description: Retrieves a user from the database by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Get User by ID
+      tags:
+      - User
+    put:
+      consumes:
+      - application/json
+      description: Updates a user in the database by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: User Data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateUserDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Update User by ID
+      tags:
+      - User
+swagger: "2.0"

@@ -9,17 +9,21 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var collection *mongo.Collection
+var db *mongo.Database
+
+func GetDBCollection(col string) *mongo.Collection {
+	return db.Collection(col)
+}
 
 func ConnectToMongo() (*mongo.Client, error) {
 	// getting username, password, and host from .env
 	username := os.Getenv("MONGODB_USERNAME")
 	password := os.Getenv("MONGODB_PASSWORD")
 	host := os.Getenv("MONGODB_HOST")
+	dbName := os.Getenv("MONGODB")
 
 	// MongoDb connection string
-	log.Println("mongodb+srv://" + username + ":" + password + "@" + host)
-	clientOptions := options.Client().ApplyURI("mongodb+srv://" + username + ":" + password + "@" + host)
+	clientOptions := options.Client().ApplyURI("mongodb+srv://" + username + ":" + password + "@" + host + "/" + dbName)
 
 	// Connect to MongoDB
 	client, err := mongo.Connect(context.Background(), clientOptions)
@@ -27,6 +31,8 @@ func ConnectToMongo() (*mongo.Client, error) {
 		log.Fatal(err)
 		return nil, err
 	}
+
+	db = client.Database(dbName)
 
 	return client, nil
 }
