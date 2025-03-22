@@ -6,16 +6,19 @@ import (
 	"os"
 	"time"
 
+	"github.com/anggara-26/pomodoro-backend.git/app/model"
 	"github.com/anggara-26/pomodoro-backend.git/db"
-	"github.com/anggara-26/pomodoro-backend.git/handlers"
-	"github.com/anggara-26/pomodoro-backend.git/services"
+	"github.com/anggara-26/pomodoro-backend.git/pkg/router"
 	"github.com/gofiber/fiber/v2"
 )
 
 type Application struct {
-	Models services.Models
+	Models model.Models
 }
 
+// @title           Pomodoro API
+// @version         1.0
+// @description     This is the API for Pomodoro App
 func main() {
 	mongoClient, err := db.ConnectToMongo()
 	if err != nil {
@@ -31,13 +34,11 @@ func main() {
 		}
 	}()
 
-	services.New(mongoClient)
-
 	log.Println("Connected to MongoDB!")
 
 	log.Println("Server is running on port " + os.Getenv("PORT"))
 
 	app := fiber.New()
-	handlers.CreateRouter(app)
+	router.CreateRouter(app)
 	app.Listen(":" + os.Getenv("PORT"))
 }
