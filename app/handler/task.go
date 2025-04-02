@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/anggara-26/pomodoro-backend.git/app/model"
-	"github.com/anggara-26/pomodoro-backend.git/db"
+	"github.com/anggara-26/pomodoro-backend.git/platform/db"
 	"github.com/go-playground/validator"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"

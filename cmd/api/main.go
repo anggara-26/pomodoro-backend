@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/anggara-26/pomodoro-backend.git/app/model"
-	"github.com/anggara-26/pomodoro-backend.git/db"
 	"github.com/anggara-26/pomodoro-backend.git/pkg/router"
+	"github.com/anggara-26/pomodoro-backend.git/platform/db"
 	"github.com/gofiber/fiber/v2"
 )
 
