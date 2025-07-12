@@ -152,6 +152,25 @@ paths:
       summary: Health Check
       tags:
       - Health
+  /api/v1/sessions/active:
+    get:
+      description: Gets all active sessions for a user
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Get Active Sessions
+      tags:
+      - Pomodoro Session
   /api/v1/sessions/end/{id}:
     post:
       consumes:
@@ -177,6 +196,49 @@ paths:
       summary: End Pomodoro Session
       tags:
       - Pomodoro Session
+  /api/v1/sessions/history:
+    get:
+      description: Gets session history for a user with pagination and filtering
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      - description: Session Type (focus, short_break, long_break)
+        in: query
+        name: type
+        type: string
+      - description: Session Status (active, completed, skipped)
+        in: query
+        name: status
+        type: string
+      - description: Start Date (YYYY-MM-DD)
+        in: query
+        name: start_date
+        type: string
+      - description: End Date (YYYY-MM-DD)
+        in: query
+        name: end_date
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Number of sessions per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Response'
+      summary: Get Session History
+      tags:
+      - Pomodoro Session
   /api/v1/sessions/start:
     post:
       consumes:
@@ -199,6 +261,91 @@ paths:
       summary: Start Pomodoro Session
       tags:
       - Pomodoro Session
+  /api/v1/stats/daily:
+    get:
+      consumes:
+      - application/json
+      description: Gets daily statistics for a user
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      - description: Date (YYYY-MM-DD format)
+        in: query
+        name: date
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Response'
+      security:
+      - BearerAuth: []
+      summary: Get Daily Statistics
+      tags:
+      - Statistics
+  /api/v1/stats/monthly:
+    get:
+      consumes:
+      - application/json
+      description: Gets monthly statistics for a user
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      - description: Month (1-12)
+        in: query
+        name: month
+        type: integer
+      - description: Year
+        in: query
+        name: year
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Response'
+      security:
+      - BearerAuth: []
+      summary: Get Monthly Statistics
+      tags:
+      - Statistics
+  /api/v1/stats/weekly:
+    get:
+      consumes:
+      - application/json
+      description: Gets weekly statistics for a user
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        required: true
+        type: string
+      - description: Week start date (YYYY-MM-DD format)
+        in: query
+        name: week_start
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Response'
+      security:
+      - BearerAuth: []
+      summary: Get Weekly Statistics
+      tags:
+      - Statistics
   /api/v1/tasks:
     post:
       consumes:

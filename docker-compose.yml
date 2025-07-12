@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  pomodoro-api:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - MONGODB_USERNAME=${MONGODB_USERNAME}
+      - MONGODB_PASSWORD=${MONGODB_PASSWORD}
+      - MONGODB_HOST=${MONGODB_HOST}
+      - MONGODB=${MONGODB}
+      - PORT=8080
+    depends_on:
+      - mongodb
+    volumes:
+      - ./serviceAccountKey.json:/root/serviceAccountKey.json
+
+  mongodb:
+    image: mongo:7.0
+    container_name: pomodoro-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGODB}
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:

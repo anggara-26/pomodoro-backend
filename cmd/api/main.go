@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/anggara-26/pomodoro-backend.git/app/model"
+	"github.com/anggara-26/pomodoro-backend.git/pkg/middleware"
 	"github.com/anggara-26/pomodoro-backend.git/pkg/router"
 	"github.com/anggara-26/pomodoro-backend.git/platform/db"
 	"github.com/gofiber/fiber/v2"
@@ -36,9 +37,20 @@ func main() {
 
 	log.Println("Connected to MongoDB!")
 
-	log.Println("Server is running on port " + os.Getenv("PORT"))
+	// Create database indexes
+	if err := db.CreateIndexes(mongoClient.Database(os.Getenv("MONGODB"))); err != nil {
+		log.Printf("Warning: Failed to create indexes: %v", err)
+	}
 
-	app := fiber.New()
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	log.Println("Server is running on port " + port)
+
+	config := middleware.CORSConfig()
+	app := fiber.New(config)
 	router.CreateRouter(app)
-	app.Listen(":" + os.Getenv("PORT"))
+	log.Fatal(app.Listen(":" + port))
 }
